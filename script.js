@@ -16,3 +16,44 @@ const countriesContainer = document.querySelector('.countries');
 //API: Application Programming Interface: piece of software that can be used by another piece of software in order to alloe applications to talk to each other. Many API-s out there: DOM API, Geolocation API, Own Class API, Online API.
 //Online API(other names web api or api): application running on a server, that receives requests for data and sends data back as response.
 //We can build our own web api-s(require back-end developement (node.js)) or use 3rd party api-s.
+
+//old school way to call ajax
+
+const getCountryData = function (country) {
+  const request = new XMLHttpRequest();
+  //need url to make ajax call
+  request.open('GET', `https://restcountries.com/v2/name/${country}`);
+  request.send();
+
+  request.addEventListener('load', function () {
+    // console.log(this.responseText);
+
+    const [data] = JSON.parse(this.responseText); //destructure as was [{}] and convert to string
+    console.log(data);
+
+    //Build card componenet
+
+    const html = `
+  <article class="country">
+    <img class="country__img" src="${data.flag}"/>
+    <div class="country__data">
+      <h3 class="country__name">${data.name}</h3>
+      <h4 class="country__region">${data.region}</h4>
+      <p class="country__row"><span>👫</span>${(
+        +data.population / 1000000
+      ).toFixed(1)}</p>
+      <p class="country__row"><span>🗣️</span>${data.languages[0].name}</p>
+      <p class="country__row"><span>💰</span>${data.currencies[0].name}</p>
+    </div>
+</article>`;
+
+    //insert html to our page:
+    countriesContainer.insertAdjacentHTML('beforeend', html);
+
+    //set countries opacity to 1
+    countriesContainer.style.opacity = 1;
+  });
+};
+
+getCountryData('hungary');
+getCountryData('usa');
