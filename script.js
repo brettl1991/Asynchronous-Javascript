@@ -13,7 +13,7 @@ const countriesContainer = document.querySelector('.countries');
 
 //AJAX: Asynchronous Javascript And XML: allow us to communicate with remote web servers in an async way. With AJAX calls we can request data from web servers dynamically. XML data format not used anymore, instead most popular data format is JSON data format which basically a JS object converted into a string.
 
-//API: Application Programming Interface: piece of software that can be used by another piece of software in order to alloe applications to talk to each other. Many API-s out there: DOM API, Geolocation API, Own Class API, Online API.
+//API: Application Programming Interface: piece of software that can be used by another piece of software in order to allow applications to talk to each other. Many API-s out there: DOM API, Geolocation API, Own Class API, Online API.
 //Online API(other names web api or api): application running on a server, that receives requests for data and sends data back as response.
 //We can build our own web api-s(require back-end developement (node.js)) or use 3rd party api-s.
 
