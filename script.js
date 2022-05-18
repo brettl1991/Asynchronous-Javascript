@@ -11,7 +11,7 @@ const countriesContainer = document.querySelector('.countries');
 //Callback functions and eventlisteners alone do not make code asynchronous!!!
 //Setting an src on any image is asynchronous, because it is like loading the img in the bg.
 
-//AJAX:Asynchronous Javascript And XML: allow us to communicate with remote web servers in an asyn way. with AJAX calls we can request data from web servers dynamically.
+//AJAX:Asynchronous Javascript And XML: allow us to communicate with remote web servers in an asyn way. with AJAX calls we can request data from web servers dynamically.XML data format not used anymore, instead most popular data format is JSON data format which basically a JS object converted into a string.
 
 //API: Application Programming Interface: piece of software that can be used by another piece of software in order to alloe applications to talk to each other. Many API-s out there: DOM API, Geolocation API, Own Class API, Online API.
 //Online API(other names web api or api): application running ona server, that receives requests for data and sends data back as response.
