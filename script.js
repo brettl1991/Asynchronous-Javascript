@@ -19,22 +19,12 @@ const countriesContainer = document.querySelector('.countries');
 
 //old school way to call ajax
 
-const getCountryData = function (country) {
-  const request = new XMLHttpRequest();
-  //need url to make ajax call
-  request.open('GET', `https://restcountries.com/v2/name/${country}`);
-  request.send();
+//Build card componenet
 
-  request.addEventListener('load', function () {
-    // console.log(this.responseText);
-
-    const [data] = JSON.parse(this.responseText); //destructure as was [{}] and convert to string
-    console.log(data);
-
-    //Build card componenet
-
-    const html = `
-  <article class="country">
+const renderCountry = function (data, className = '') {
+  //special class been created in html for neighbour contries
+  const html = `
+  <article class="country ${className}">
     <img class="country__img" src="${data.flag}"/>
     <div class="country__data">
       <h3 class="country__name">${data.name}</h3>
@@ -47,13 +37,51 @@ const getCountryData = function (country) {
     </div>
 </article>`;
 
-    //insert html to our page:
-    countriesContainer.insertAdjacentHTML('beforeend', html);
+  //insert html to our page:
+  countriesContainer.insertAdjacentHTML('beforeend', html);
 
-    //set countries opacity to 1
-    countriesContainer.style.opacity = 1;
+  //set countries opacity to 1
+  countriesContainer.style.opacity = 1;
+};
+
+const getCountryAndNeigbour = function (country) {
+  //ajax call country 1
+  const request = new XMLHttpRequest();
+  //need url to make ajax call
+  request.open('GET', `https://restcountries.com/v2/name/${country}`);
+  request.send();
+
+  request.addEventListener('load', function () {
+    // console.log(this.responseText);
+
+    const [data] = JSON.parse(this.responseText); //destructure as was [{}] and convert to string
+    console.log(data);
+
+    //render country 1
+    renderCountry(data);
+
+    //get neighbour contry 2
+    //Create a sequence of ajax calls, so the second runs only after the first one has finished
+    const [neighbour] = data.borders;
+
+    if (!neighbour) return;
+
+    //ajax call country 2
+
+    const request2 = new XMLHttpRequest();
+    //need url to make ajax call
+    request2.open('GET', `https://restcountries.com/v2/alpha/${neighbour}`);
+    request2.send();
+
+    request2.addEventListener('load', function () {
+      console.log(this.responseText);
+      const data2 = JSON.parse(this.responseText); //country codes unique so no array return so we dont need destructure
+      console.log(data2);
+      renderCountry(data2, 'neighbour');
+    });
   });
 };
 
-getCountryData('hungary');
-getCountryData('usa');
+getCountryAndNeigbour('hungary');
+
+//callback hell: when we have a lot of nested callbacks in order to execute asynchronous tasks in sequence
