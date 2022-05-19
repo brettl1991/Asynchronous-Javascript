@@ -107,7 +107,7 @@ console.log(request); //immediately return a promise
 //   fetch(`https://restcountries.com/v2/name/${country}`)
 //     .then(function (response) {
 //       console.log(response); //how we handle a fulfilled promise which returned by fetch function
-//       return response.json(); //this method available on all the response objects, result value, so to be able to read the data from the response need to call json method which will also return a promise so we can call agan then method to access the data
+//       return response.json(); //this method available on all the response objects, result value, so to be able to read the data from the response need to call json method which will also return a promise so we can call again the then() method to access the data
 //     })
 //     .then(function (data) {
 //       console.log(data);
