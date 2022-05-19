@@ -44,44 +44,59 @@ const renderCountry = function (data, className = '') {
   countriesContainer.style.opacity = 1;
 };
 
-const getCountryAndNeigbour = function (country) {
-  //ajax call country 1
-  const request = new XMLHttpRequest();
-  //need url to make ajax call
-  request.open('GET', `https://restcountries.com/v2/name/${country}`);
-  request.send();
+// const getCountryAndNeigbour = function (country) {
+//ajax call country 1
+// const request = new XMLHttpRequest();
+//need url to make ajax call
+// request.open('GET', `https://restcountries.com/v2/name/${country}`);
+// request.send();
 
-  request.addEventListener('load', function () {
-    // console.log(this.responseText);
+// request.addEventListener('load', function () {
+// console.log(this.responseText);
 
-    const [data] = JSON.parse(this.responseText); //destructure as was [{}] and convert to string
-    console.log(data);
+// const [data] = JSON.parse(this.responseText); //destructure as was [{}] and convert to string
+// console.log(data);
 
-    //render country 1
-    renderCountry(data);
+//render country 1
+// renderCountry(data);
 
-    //get neighbour contry 2
-    //Create a sequence of ajax calls, so the second runs only after the first one has finished
-    const [neighbour] = data.borders;
+//get neighbour contry 2
+//Create a sequence of ajax calls, so the second runs only after the first one has finished
+// const [neighbour] = data.borders;
 
-    if (!neighbour) return;
+// if (!neighbour) return;
 
-    //ajax call country 2
+//ajax call country 2
 
-    const request2 = new XMLHttpRequest();
-    //need url to make ajax call
-    request2.open('GET', `https://restcountries.com/v2/alpha/${neighbour}`);
-    request2.send();
+// const request2 = new XMLHttpRequest();
+//need url to make ajax call
+//     request2.open('GET', `https://restcountries.com/v2/alpha/${neighbour}`);
+//     request2.send();
 
-    request2.addEventListener('load', function () {
-      console.log(this.responseText);
-      const data2 = JSON.parse(this.responseText); //country codes unique so no array return so we dont need destructure
-      console.log(data2);
-      renderCountry(data2, 'neighbour');
-    });
-  });
-};
+//     request2.addEventListener('load', function () {
+//       console.log(this.responseText);
+//       const data2 = JSON.parse(this.responseText); //country codes unique so no array return so we dont need destructure
+//       console.log(data2);
+//       renderCountry(data2, 'neighbour');
+//     });
+//   });
+// };
 
-getCountryAndNeigbour('hungary');
+// getCountryAndNeigbour('hungary');
 
 //callback hell: when we have a lot of nested callbacks in order to execute asynchronous tasks in sequence
+
+//PROMISES AND THE FETCH API
+
+//old way:
+// const request = new XMLHttpRequest();
+// request.open('GET', `https://restcountries.com/v2/name/${country}`);
+// request.send();
+
+const request = fetch(`https://restcountries.com/v2/name/hungary`);
+console.log(request); //immediately return a promise
+
+//promise: an object that used as a placeholder for a future result of an asynchronous operation, like a container for an asynchronously delivered value. Basically a container for a future value.
+//2 big advantages of using promised: 1.we no longer need to rely on events and callbacks passed into asynchronous functions to handle asynchronous results. 2.Instead of nesting we can chain promises for a sequence of asynchronous operations: escaping callback hell!
+
+//Promise lifestyle: 1.before the future value is availablepromises are pending 2. when the task are finishes the promise is settled( fullfilled promises: has succesfully resulted a value just how we expected, rejected promises: has been an error during the asynchronous task (example an error when a user is offline and cant connect to the api server)). We are able to handle these different states in our code. Promise is only settled once!!!! So impossible to change that stage. Consume a promise when we already have a promise, like when promise returned from fetch (api), but first the promise have to built(like fetch api)
