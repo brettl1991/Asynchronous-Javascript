@@ -100,3 +100,25 @@ console.log(request); //immediately return a promise
 //2 big advantages of using promises: 1.we no longer need to rely on events and callbacks passed into asynchronous functions to handle asynchronous results. 2.Instead of nesting we can chain promises for a sequence of asynchronous operations: escaping callback hell!
 
 //Promise lifestyle: 1.before the future value is available promises are pending 2. when the task are finishes the promise is settled( fullfilled promises: has succesfully resulted a value just how we expected, rejected promises: has been an error during the asynchronous task (example an error when a user is offline and cant connect to the api server)). We are able to handle these different states in our code. Promise is only settled once!!!! So impossible to change that stage. Consume a promise when we already have a promise, like when promise returned from fetch (api), but first the promise have to built(like fetch api).
+
+//Consuming promise
+
+// const getCountryData = function (country) {
+//   fetch(`https://restcountries.com/v2/name/${country}`)
+//     .then(function (response) {
+//       console.log(response); //how we handle a fulfilled promise which returned by fetch function
+//       return response.json(); //this method available on all the response objects, result value, so to be able to read the data from the response need to call json method which will also return a promise so we can call agan then method to access the data
+//     })
+//     .then(function (data) {
+//       console.log(data);
+//       renderCountry(data[0]);
+//     });
+// };
+
+//cleaner:
+const getCountryData = function (country) {
+  fetch(`https://restcountries.com/v2/name/${country}`)
+    .then(response => response.json())
+    .then(data => renderCountry(data[0]));
+};
+getCountryData('hungary');
