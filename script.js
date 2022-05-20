@@ -17,6 +17,11 @@ const countriesContainer = document.querySelector('.countries');
 //Online API(other names web api or api): application running on a server, that receives requests for data and sends data back as response.
 //We can build our own web api-s(require back-end developement (node.js)) or use 3rd party api-s.
 
+const renderError = function (message) {
+  countriesContainer.insertAdjacentText('beforeend', message);
+  // countriesContainer.style.opacity = 1;
+};
+
 //old school way to call ajax
 
 //Build card componenet
@@ -123,11 +128,6 @@ console.log(request); //immediately return a promise
 // };
 // getCountryData('hungary');
 
-const renderError = function (message) {
-  countriesContainer.insertAdjacentText('beforeend', message);
-  countriesContainer.style.opacity = 1;
-};
-
 //chaining promises
 const getCountryData = function (country) {
   //Country1
@@ -149,7 +149,10 @@ const getCountryData = function (country) {
     .catch(err => {
       console.error(`${err} 💣💣💣`); //this will show up in console
       renderError(`Something went wrong ${err.message}. Try again!`); //this will show up when we click the btn(Something went wrong Failed to fetch. Try again!)
-    });
+    })
+    .finally(() => {
+      countriesContainer.style.opacity = 1;
+    }); //this method avaliable on all promises besides then() and catch().Inside the callback function will be called no matter the promise fulfilled or rejeced, gonna be called always that we write. Then method only called when promise fulfilled, catch method only called when promise rejected.
 };
 
 //Handling error messages upon promis rejection
