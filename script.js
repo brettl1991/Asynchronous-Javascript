@@ -128,23 +128,61 @@ console.log(request); //immediately return a promise
 // };
 // getCountryData('hungary');
 
+//helper function for fetch
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} ${response.status})`);
+    return response.json();
+  });
+};
+// //chaining promises
+// const getCountryData = function (country) {
+//   //Country1
+//   fetch(`https://restcountries.com/v2/name/${country}`)
+//     .then(response => {
+//       if (!response.ok)
+//         throw new Error(`Country not found! ${response.status}`);
+//       return response.json();
+//       // err => alert(err) //we catch with this the error
+//     })
+//     .then(data => {
+//       renderCountry(data[0]);
+//       // const neighbour = data[0].borders[0];
+//       const neigbhour = 'vuyfgbhjcvb';
+//       if (!neighbour) return;
+
+//       //Country2
+//       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+//     })
+//     .then(response => response.json())
+//     .then(data => renderCountry(data, 'neighbour'))
+//     .catch(err => {
+//       console.error(`${err} 💣💣💣`); //this will show up in console
+//       renderError(`Something went wrong ${err.message}. Try again!`); //this will show up when we click the btn(Something went wrong Failed to fetch. Try again!)
+//     })
+//     .finally(() => {
+//       countriesContainer.style.opacity = 1;
+//     }); //this method avaliable on all promises besides then() and catch().Inside the callback function will be called no matter the promise fulfilled or rejeced, gonna be called always that we write. Then method only called when promise fulfilled, catch method only called when promise rejected.
+// };
+
 //chaining promises
 const getCountryData = function (country) {
   //Country1
-  fetch(`https://restcountries.com/v2/name/${country}`)
-    .then(
-      response => response.json()
-      // err => alert(err) //we catch with this the error
-    )
+  getJSON(`https://restcountries.com/v2/name/${country}`, 'Country not found!')
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
-      if (!neighbour) return;
+      // const neigbhour = 'v?uyfgbhjcvb';//if the error will be in the 2nd fetch by adding non valid neigbhour data
+      if (!neighbour) throw new Error('No neighbour found');
 
       //Country2
-      return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
+      return getJSON(
+        `https://restcountries.com/v2/alpha/${neighbour}`,
+        'Country not found!'
+      );
     })
-    .then(response => response.json())
+
     .then(data => renderCountry(data, 'neighbour'))
     .catch(err => {
       console.error(`${err} 💣💣💣`); //this will show up in console
@@ -155,10 +193,13 @@ const getCountryData = function (country) {
     }); //this method avaliable on all promises besides then() and catch().Inside the callback function will be called no matter the promise fulfilled or rejeced, gonna be called always that we write. Then method only called when promise fulfilled, catch method only called when promise rejected.
 };
 
-//Handling error messages upon promis rejection
+//Handling error messages upon promise rejection
 //only error could happen with fetch that the user loses internet
 btn.addEventListener('click', function () {
   getCountryData('hungary');
 });
 
 //after this we get a btn pop up (where am I?) and when we offline we get an error message in the console(failed to fetch). To handle rejections we have 2 options: 1. pass a 2nd callback func in the then() method. But instead of 2nd callback functions there is a  2nd option, much nicer way to handle fetch errors is to handle errors globally, assind a catch() method.
+
+//Throwing errors manually (fixing 404 error)
+// getCountryData('vgwbdukjvb khbdc'); //up above throw new Error, so the effect of throwing an error message will lead to the promise will be rejected if is this the case
