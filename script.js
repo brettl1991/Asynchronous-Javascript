@@ -123,11 +123,19 @@ console.log(request); //immediately return a promise
 // };
 // getCountryData('hungary');
 
+const renderError = function (message) {
+  countriesContainer.insertAdjacentText('beforeend', message);
+  countriesContainer.style.opacity = 1;
+};
+
 //chaining promises
 const getCountryData = function (country) {
   //Country1
   fetch(`https://restcountries.com/v2/name/${country}`)
-    .then(response => response.json())
+    .then(
+      response => response.json()
+      // err => alert(err) //we catch with this the error
+    )
     .then(data => {
       renderCountry(data[0]);
       const neighbour = data[0].borders[0];
@@ -137,7 +145,17 @@ const getCountryData = function (country) {
       return fetch(`https://restcountries.com/v2/alpha/${neighbour}`);
     })
     .then(response => response.json())
-    .then(data => renderCountry(data, 'neighbour'));
+    .then(data => renderCountry(data, 'neighbour'))
+    .catch(err => {
+      console.error(`${err} 💣💣💣`); //this will show up in console
+      renderError(`Something went wrong ${err.message}. Try again!`); //this will show up when we click the btn(Something went wrong Failed to fetch. Try again!)
+    });
 };
 
-getCountryData('hungary');
+//Handling error messages upon promis rejection
+//only error could happen with fetch that the user loses internet
+btn.addEventListener('click', function () {
+  getCountryData('hungary');
+});
+
+//after this we get a btn pop up (where am I?) and when we offline we get an error message in the console(failed to fetch). To handle rejections we have 2 options: 1. pass a 2nd callback func in the then() method. But instead of 2nd callback functions there is a  2nd option, much nicer way to handle fetch errors is to handle errors globally, assind a catch() method.
