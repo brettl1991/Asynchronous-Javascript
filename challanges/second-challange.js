@@ -2,7 +2,6 @@
 
 const wait = function (seconds) {
   return new Promise(function (resolve) {
-    ////no need reject as impossible the timer to fail in this case
     setTimeout(resolve, seconds * 1000);
   });
 };
