@@ -87,6 +87,51 @@ const renderCountry = function (data, className = '') {
 // } catch (err) {
 //   alert(err.message);
 // }
+// const renderError = function (message) {
+//   countriesContainer.insertAdjacentText('beforeend', message);
+//   countriesContainer.style.opacity = 1;
+// };
+
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+
+// const whereAmI = async function () {
+//   try {
+//     //Geolocation
+//     const position = await getPosition();
+//     const { latitude: lat, longitude: lng } = position.coords;
+
+//     //Reverse geocoding
+//     const responseGeoCoding = await fetch(
+//       `https://geocode.xyz/${lat},${lng}?geoit=json`
+//     );
+//     //Manually creating an error for catch to reject the promise, otherwise just the simple err messages inside catch wont do just displaying the error
+//     if (!responseGeoCoding.ok) throw new Error('Problem getting location data');
+//     const dataGeo = await responseGeoCoding.json();
+//     console.log(dataGeo);
+
+//     //Country data
+//     const response = await fetch(
+//       `https://restcountries.com/v2/name/${dataGeo.country}`
+//     );
+
+//     //same goes here
+//     if (!responseGeoCoding.ok) throw new Error('Problem getting country');
+//     const data = await response.json();
+//     console.log(data);
+
+//     renderCountry(data[0]);
+//   } catch (err) {
+//     console.error(`${err}`);
+//     renderError(`💥 ${err.message}`);
+//   }
+// };
+// whereAmI();
+
+//RETURNING VALUES FROM ASYNC FUNCTIONS
 const renderError = function (message) {
   countriesContainer.insertAdjacentText('beforeend', message);
   countriesContainer.style.opacity = 1;
@@ -124,9 +169,30 @@ const whereAmI = async function () {
     console.log(data);
 
     renderCountry(data[0]);
+    return `You are in ${dataGeo.city}, ${dataGeo.country}`;
   } catch (err) {
     console.error(`${err}`);
     renderError(`💥 ${err.message}`);
+
+    //Reject promise returned from async function
+    throw err; //sometimes need to re-throw the error to be able to see
   }
 };
-whereAmI();
+// const city = whereAmI();
+// console.log(city); //this will return just in the console a promise: Promise{<pending>}
+//and this will be later the You are in...
+
+// whereAmI()
+//   .then(city => console.log(city))
+//   .catch(err => console.error(`2: ${err.message} 💥`)).finally(()=>console.log('Finished getting location')); //You are in MANCHESTER, United Kingdom
+
+//convert the above to async function
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(city);
+  } catch (err) {
+    console.error(`2: ${err.message} 💥`);
+  }
+  console.log('Finished getting location');
+})();
