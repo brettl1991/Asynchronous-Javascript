@@ -43,11 +43,55 @@ const renderCountry = function (data, className = '') {
 //   renderCountry(data[0]);
 // };
 // whereAmI('hungary');
-console.log('FIRST'); //this should be printed first
+// console.log('FIRST'); //this should be printed first
 
 //the async await is basically syntectic sugar over then() method in promises, behind the scenes we still using primises
 
 //finish the func with geolocation and reverse geocoding
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+
+// const whereAmI = async function () {
+//   //Geolocation
+//   const position = await getPosition();
+//   const { latitude: lat, longitude: lng } = position.coords;
+
+//   //Reverse geocoding
+//   const responseGeoCoding = await fetch(
+//     `https://geocode.xyz/${lat},${lng}?geoit=json`
+//   );
+//   const dataGeo = await responseGeoCoding.json();
+//   console.log(dataGeo);
+
+//   //Country data
+//   const response = await fetch(
+//     `https://restcountries.com/v2/name/${dataGeo.country}`
+//   );
+
+//   const data = await response.json();
+//   console.log(data);
+
+//   renderCountry(data[0]);
+// };
+// whereAmI(); //we will get the data where we actually are -> UK
+
+//ERROR HANDLING WITH TRY CATCH
+
+// try {
+//   let y = 1;
+//   const x = 2;
+//   x = 3;
+// } catch (err) {
+//   alert(err.message);
+// }
+const renderError = function (message) {
+  countriesContainer.insertAdjacentText('beforeend', message);
+  countriesContainer.style.opacity = 1;
+};
+
 const getPosition = function () {
   return new Promise(function (resolve, reject) {
     navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -55,25 +99,34 @@ const getPosition = function () {
 };
 
 const whereAmI = async function () {
-  //Geolocation
-  const position = await getPosition();
-  const { latitude: lat, longitude: lng } = position.coords;
+  try {
+    //Geolocation
+    const position = await getPosition();
+    const { latitude: lat, longitude: lng } = position.coords;
 
-  //Reverse geocoding
-  const responseGeoCoding = await fetch(
-    `https://geocode.xyz/${lat},${lng}?geoit=json`
-  );
-  const dataGeo = await responseGeoCoding.json();
-  console.log(dataGeo);
+    //Reverse geocoding
+    const responseGeoCoding = await fetch(
+      `https://geocode.xyz/${lat},${lng}?geoit=json`
+    );
+    //Manually creating an error for catch to reject the promise, otherwise just the simple err messages inside catch wont do just displaying the error
+    if (!responseGeoCoding.ok) throw new Error('Problem getting location data');
+    const dataGeo = await responseGeoCoding.json();
+    console.log(dataGeo);
 
-  //Country data
-  const response = await fetch(
-    `https://restcountries.com/v2/name/${dataGeo.country}`
-  );
+    //Country data
+    const response = await fetch(
+      `https://restcountries.com/v2/name/${dataGeo.country}`
+    );
 
-  const data = await response.json();
-  console.log(data);
+    //same goes here
+    if (!responseGeoCoding.ok) throw new Error('Problem getting country');
+    const data = await response.json();
+    console.log(data);
 
-  renderCountry(data[0]);
+    renderCountry(data[0]);
+  } catch (err) {
+    console.error(`${err}`);
+    renderError(`💥 ${err.message}`);
+  }
 };
-whereAmI(); //we will get the data where we actually are -> UK
+whereAmI();
