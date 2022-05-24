@@ -207,24 +207,89 @@ const getJSON = function (url, errorMsg = 'Something went wrong') {
   });
 };
 
-const get3Countries = async function (c1, c2, c3) {
-  try {
-    // const [data1] = await getJSON(`https://restcountries.com/v2/name/${c1}`);
-    // const [data2] = await getJSON(`https://restcountries.com/v2/name/${c2}`);
-    // const [data3] = await getJSON(`https://restcountries.com/v2/name/${c3}`);
-    // console.log([data1.capital, data2.capital, data3.capital]);
-    //we can run them in parallel in the same time saving valuable loading time instead of sequence
-    const data = await Promise.all([
-      getJSON(`https://restcountries.com/v2/name/${c1}`),
-      getJSON(`https://restcountries.com/v2/name/${c2}`),
-      getJSON(`https://restcountries.com/v2/name/${c3}`),
-    ]);
-    console.log(data.map(d => d[0].capital));
-  } catch (err) {
-    console.error(err);
-  }
-};
+// const get3Countries = async function (c1, c2, c3) {
+//   try {
+//     // const [data1] = await getJSON(`https://restcountries.com/v2/name/${c1}`);
+//     // const [data2] = await getJSON(`https://restcountries.com/v2/name/${c2}`);
+//     // const [data3] = await getJSON(`https://restcountries.com/v2/name/${c3}`);
+//     // console.log([data1.capital, data2.capital, data3.capital]);
+//     //we can run them in parallel in the same time saving valuable loading time instead of sequence
+//promise.all combinator
+//     const data = await Promise.all([
+//       getJSON(`https://restcountries.com/v2/name/${c1}`),
+//       getJSON(`https://restcountries.com/v2/name/${c2}`),
+//       getJSON(`https://restcountries.com/v2/name/${c3}`),
+//     ]);
+//     console.log(data.map(d => d[0].capital));
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
 
-get3Countries('hungary', 'canada', 'tanzania'); //(3) ['Budapest', 'Ottawa', 'Dodoma']
+// get3Countries('hungary', 'canada', 'tanzania'); //(3) ['Budapest', 'Ottawa', 'Dodoma']
 
 //so when you have a situation when you need to do multiple async operations at the same time, they dont depend on one an other, you alway should run them on parallel
+
+//OTHER PROMISE COMBINATORS/_race/allSettled and any
+
+//Promice.race
+//the first settled promise win the race
+
+//below these promises will race against each other
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v2/name/italy`),
+    getJSON(`https://restcountries.com/v2/name/egypt`),
+    getJSON(`https://restcountries.com/v2/name/mexico`),
+  ]);
+  console.log(res[0]);
+})();
+
+//creating a special timeout project which will be automatically reject after certain time passed
+const timeout = function (sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error('Request took too long!'));
+    });
+  }, sec * 1000);
+};
+
+//so if the timeout happens first than the rest will be rejected
+Promise.race([
+  getJSON(`https://restcountries.com/v2/name/tanzania`),
+  timeout(1),
+  //using now then (we could alos use async await)
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
+
+//Promise.allSettled returns an array of all the results of all the promises
+
+Promise.allSettled([
+  Promise.resolve('Succes'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another Succes'),
+]).then(res => console.log(res));
+
+// 0: {status: 'fulfilled', value: 'Succes'}
+// 1: {status: 'rejected', reason: 'ERROR'}
+// 2: {status: 'fulfilled', value: 'Another Succes'}
+
+Promise.all([
+  Promise.resolve('Succes'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another Succes'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
+
+//we get ERROR as Promise.all will shortcircut if we have one rejected promise, that is the difference between the above
+
+//Promise.any: will return the first fulfilled promise, will ignore rejected promises
+Promise.any([
+  Promise.resolve('Succes'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another Succes'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
