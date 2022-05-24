@@ -33,7 +33,7 @@
 //   }, 2000);
 // });
 
-// //consume promise
+// //consume promise:We consume a promise by calling then() and catch() methods on the promise.
 // lotteryPromise.then(res => console.log(res)).catch(err => console.error(err)); //so the res going to be you win and the error will be you lost..
 
 // //prmisifying the setTimeout func with wait func
