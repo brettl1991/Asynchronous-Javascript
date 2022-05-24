@@ -196,3 +196,35 @@ const whereAmI = async function () {
   }
   console.log('Finished getting location');
 })();
+
+//RUNNING PROMISES IN PARALLEL
+//WE WNAT TO GET 3 COUNTRY DATA AT THE SAME TIME but their orders which we get first not matter
+
+const getJSON = function (url, errorMsg = 'Something went wrong') {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} ${response.status})`);
+    return response.json();
+  });
+};
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    // const [data1] = await getJSON(`https://restcountries.com/v2/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.com/v2/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.com/v2/name/${c3}`);
+    // console.log([data1.capital, data2.capital, data3.capital]);
+    //we can run them in parallel in the same time saving valuable loading time instead of sequence
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v2/name/${c1}`),
+      getJSON(`https://restcountries.com/v2/name/${c2}`),
+      getJSON(`https://restcountries.com/v2/name/${c3}`),
+    ]);
+    console.log(data.map(d => d[0].capital));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+get3Countries('hungary', 'canada', 'tanzania'); //(3) ['Budapest', 'Ottawa', 'Dodoma']
+
+//so when you have a situation when you need to do multiple async operations at the same time, they dont depend on one an other, you alway should run them on parallel
